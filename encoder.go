@@ -31,23 +31,23 @@ func AppendInt64(dst []byte, n int64) []byte {
 }
 
 // AppendUint8 appends the uint8 value to dst.
-func AppendUint8(dst []byte, n int8) []byte {
+func AppendUint8(dst []byte, n uint8) []byte {
 	return append(dst, 0xcc, byte(n))
 }
 
 // AppendUint16 appends the uint16 value to dst.
-func AppendUint16(dst []byte, n int16) []byte {
+func AppendUint16(dst []byte, n uint16) []byte {
 	return append(dst, 0xcd, byte(n>>8), byte(n))
 }
 
 // AppendUint32 appends the uint32 value to dst.
-func AppendUint32(dst []byte, n int32) []byte {
+func AppendUint32(dst []byte, n uint32) []byte {
 	return append(dst, 0xce,
 		byte(n>>24), byte(n>>16), byte(n>>8), byte(n))
 }
 
 // AppendUint64 appends the uint64 value to dst.
-func AppendUint64(dst []byte, n int64) []byte {
+func AppendUint64(dst []byte, n uint64) []byte {
 	return append(dst, 0xcf,
 		byte(n>>56), byte(n>>48),
 		byte(n>>40), byte(n>>32),
