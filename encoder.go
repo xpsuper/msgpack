@@ -5,19 +5,23 @@ import (
 	"unsafe"
 )
 
+// AppendInt8 appends the int8 value to dst.
 func AppendInt8(dst []byte, n int8) []byte {
 	return append(dst, 0xd0, byte(n))
 }
 
+// AppendInt16 appends the int16 value to dst.
 func AppendInt16(dst []byte, n int16) []byte {
 	return append(dst, 0xd1, byte(n>>8), byte(n))
 }
 
+// AppendInt32 appends the int32 value to dst.
 func AppendInt32(dst []byte, n int32) []byte {
 	return append(dst, 0xd2,
 		byte(n>>24), byte(n>>16), byte(n>>8), byte(n))
 }
 
+// AppendInt64 appends the int64 value to dst.
 func AppendInt64(dst []byte, n int64) []byte {
 	return append(dst, 0xd3,
 		byte(n>>56), byte(n>>48),
@@ -26,19 +30,23 @@ func AppendInt64(dst []byte, n int64) []byte {
 		byte(n>>8), byte(n))
 }
 
+// AppendUint8 appends the uint8 value to dst.
 func AppendUint8(dst []byte, n int8) []byte {
 	return append(dst, 0xcc, byte(n))
 }
 
+// AppendUint16 appends the uint16 value to dst.
 func AppendUint16(dst []byte, n int16) []byte {
 	return append(dst, 0xcd, byte(n>>8), byte(n))
 }
 
+// AppendUint32 appends the uint32 value to dst.
 func AppendUint32(dst []byte, n int32) []byte {
 	return append(dst, 0xce,
 		byte(n>>24), byte(n>>16), byte(n>>8), byte(n))
 }
 
+// AppendUint64 appends the uint64 value to dst.
 func AppendUint64(dst []byte, n int64) []byte {
 	return append(dst, 0xcf,
 		byte(n>>56), byte(n>>48),
@@ -47,6 +55,7 @@ func AppendUint64(dst []byte, n int64) []byte {
 		byte(n>>8), byte(n))
 }
 
+// AppendFloat32 appends the float32 value to dst.
 func AppendFloat32(dst []byte, fl float32) []byte {
 	ptr := *(*[4]byte)(unsafe.Pointer(&fl))
 	return append(dst, 0xca,
@@ -54,7 +63,7 @@ func AppendFloat32(dst []byte, fl float32) []byte {
 
 }
 
-// AppendFloat64 ...
+// AppendFloat64 appends the float64 value to dst.
 func AppendFloat64(dst []byte, fl float64) []byte {
 	ptr := *(*[8]byte)(unsafe.Pointer(&fl))
 	return append(dst, 0xcb,
@@ -63,7 +72,7 @@ func AppendFloat64(dst []byte, fl float64) []byte {
 
 }
 
-// AppendString ...
+// AppendString appends the string value to dst.
 func AppendString(dst []byte, s string) []byte {
 	dst = appendLen(dst, len(s))
 	return append(dst, s...)
@@ -86,6 +95,7 @@ func appendLen(dst []byte, size int) []byte {
 	return dst
 }
 
+// AppendBytes appends the byte slice to dst.
 func AppendBytes(dst, s []byte) []byte {
 	dst = appendByteLen(dst, len(s))
 	return append(dst, s...)
@@ -106,6 +116,7 @@ func appendByteLen(dst []byte, size int) []byte {
 	return dst
 }
 
+// AppendArrayLen appends `size` as an array len to dst.
 func AppendArrayLen(dst []byte, size int) []byte {
 	switch {
 	case size < 16:
@@ -121,6 +132,7 @@ func AppendArrayLen(dst []byte, size int) []byte {
 	return dst
 }
 
+// AppendExt appends the extension of type `kind` and the payload `b` to dst.
 func AppendExt(dst []byte, kind byte, b []byte) []byte {
 	dst = appendExtLen(dst, len(b))
 	dst = append(dst, kind)
@@ -169,6 +181,23 @@ func AppendTime(dst []byte, ts time.Time) []byte {
 			byte(n>>40), byte(n>>32),
 			byte(n>>24), byte(n>>16),
 			byte(n>>8), byte(n))
+	}
+
+	return dst
+}
+
+// AppendNil appends a nil value to dst.
+func AppendNil(dst []byte) []byte {
+	return append(dst, 0xc0)
+}
+
+// AppendBool appends a bool value to dst.
+func AppendBool(dst []byte, v bool) []byte {
+	// if someone knows how to get rid of the branching, please let me know.
+	if v {
+		dst = append(dst, 0xc3)
+	} else {
+		dst = append(dst, 0xc2)
 	}
 
 	return dst
